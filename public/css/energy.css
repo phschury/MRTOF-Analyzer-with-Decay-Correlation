@@ -1,0 +1,43 @@
+.energy-viewer .viewer-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; }
+.energy-viewer .controls label { line-height: 1.25; }
+.energy-viewer select { width: auto; min-width: 70px; }
+#energyChannel { min-width: 190px; max-width: 280px; }
+.energy-viewer input[type=number] { width: 108px; height: 30px; }
+.energy-options { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 8px; }
+.energy-time-options { display: flex; flex-wrap: wrap; gap: 12px; max-width: 100%; }
+.energy-options fieldset { display: flex; align-items: flex-end; flex-wrap: wrap; gap: 10px; margin: 0; padding: 8px 12px; border: 1px solid #ddd; border-radius: 8px; background: #fff; }
+.energy-options legend { font-size: 13px; font-weight: 600; }
+.energy-options label { line-height: 1.25; }
+#energyAxis:disabled { opacity: 0.5; background: #f0f0f0; }
+#energyStatus { font-size: 13px; min-height: 20px; margin: 4px 0; overflow-wrap: anywhere; }
+#energyStatus.error { color: #a52020; }
+#energyInfo { font-size: 13px; line-height: 1.5; }
+#energyInfo:empty { display: none; }
+#energyChart { position: relative; width: 100%; height: 100%; min-height: 280px; }
+.energy-viewer .chartBox { min-height: 300px; }
+#energyFiles td:first-child { overflow-wrap: anywhere; max-width: 500px; }
+.energy-file-select { border: 0; background: transparent; padding: 0; height: auto; font: inherit; text-align: left; color: #174b79; cursor: pointer; }
+#energyFiles tr.activeDatasetRow { background: #eaf2f8; }
+#energyFiles button.energy-remove { height: auto; padding: 4px 8px; }
+.energy-viewer .loadedFilesPanel { min-height: 90px; }
+@media(max-width: 650px) { .energy-options fieldset { width: 100%; box-sizing: border-box; } #energyChannel { min-width: 120px; max-width: 210px; } }
+.energy-viewer .loadedFilesTable { min-width: 640px; }
+#energyFiles td:first-child { min-width: 220px; }
+.energy-viewer #energyInfo { font-family: inherit; white-space: normal; }
+
+.energy-roi-controls { display: flex; align-items: center; gap: 12px; margin-top: 6px; font-size: 13px; flex-wrap: wrap; }
+.energy-roi-controls button { height: auto; padding: 4px 8px; }
+#energySavedRois:empty { display: none; }
+#energySavedRois button[aria-pressed="true"] { background: #fff3c4; border-color: #b47800; }
+
+.energy-tof-dialog { width: min(680px, calc(100vw - 64px)); max-height: 80vh; padding: 20px; border: 1px solid #aaa; border-radius: 8px; }
+.energy-tof-dialog::backdrop { background: rgba(0,0,0,0.3); }
+.energy-tof-dialog h2 { margin-top: 0; }
+#energyTofSource { overflow-wrap: anywhere; font-weight: 600; }
+#energyTofChoices { max-height: 40vh; overflow: auto; }
+#energyTofChoices label { flex-direction: row; align-items: center; gap: 8px; padding: 8px 0; line-height: 1.4; }
+#energyTofChoices input { width: auto; height: auto; flex-shrink: 0; }
+#energyTofChoices span { overflow-wrap: anywhere; min-width: 0; }
+.energy-tof-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }
+.energy-tof-connection { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin: 4px 0; font-size: 13px; overflow-wrap: anywhere; }
+#energyTofDisconnect { height: auto; padding: 4px 8px; }

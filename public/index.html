@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>MRTOF Analyzer</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <script defer src="/js/home.js"></script>
+  <script defer src="/js/memory-usage.js"></script>
+</head>
+<body>
+
+  <h1>MRTOF Analyzer</h1>
+  <div class="memory-usage" data-memory-usage aria-live="off">Server RAM: checking…</div>
+
+  <div class="navPanel">
+    <a class="navButton" href="/ufo-finder/" target="_blank" rel="noopener" title="Open UFO Finder in a new tab">UFO Finder</a>
+    <a class="navButton" href="/energy.html">Energy Histogram Viewer</a>
+    <a class="navButton" href="/histogram.html">
+      ToF Histogram Viewer
+    </a>
+
+    <a class="navButton" href="/analysis.html">
+      Analysis
+    </a>
+
+    <a class="navButton" href="/preferences.html">
+      Preferences
+    </a>
+    <button id="newSessionButton" class="navButton" type="button">New Session</button>
+  </div>
+  <p id="sessionStatus" role="status"></p>
+
+</body>
+</html>

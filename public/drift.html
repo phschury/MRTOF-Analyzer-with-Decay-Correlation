@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TOF drift</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/css/drift.css">
+  <script defer src="/vendor/plotly/plotly.min.js"></script>
+  <script defer src="/js/number-display.js"></script>
+  <script defer src="/js/tof-axis-editor.js"></script>
+  <script defer src="/js/drift.js"></script>
+</head>
+<body>
+  <h1>TOF drift</h1>
+  <p id="source"></p>
+  <form id="driftControls">
+    <label>TAG <select id="driftTag" aria-label="TAG"></select></label>
+    <label>Sweeps per row <input id="sweepBinWidth" type="number" min="1" step="1" placeholder="Auto overview"></label>
+    <button id="refreshDrift" type="submit">Update heatmap</button>
+  </form>
+  <p id="status" role="status">Loading drift data…</p>
+  <div id="driftPlot" aria-label="Time-of-flight versus sweep event counts"></div>
+</body>
+</html>

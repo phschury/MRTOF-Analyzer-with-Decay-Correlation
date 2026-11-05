@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Preferences — MRTOF Analyzer</title><link rel="stylesheet" href="/css/style.css"><script defer src="/js/number-display.js"></script><script defer src="/js/preferences.js"></script>
+<style>form{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;width:100%;box-sizing:border-box}#preferenceFields{grid-column:1;min-width:0;box-sizing:border-box;background:white;padding:24px;border-radius:8px}fieldset{margin:16px 0;border:1px solid #ccc}label{display:block;margin:12px 0}input,select{margin-left:12px;padding:6px}input{max-width:100%}input[type=text]{display:block;width:100%;margin:8px 0}button{margin:8px 8px 0 0}.directory-entry{position:relative;display:block;margin-top:8px}.directory-entry input[type=text]{margin:0;height:34px;padding-right:78px}.directory-entry button{position:absolute;right:4px;top:4px;height:26px;margin:0;padding:2px 10px;font-size:12px;border:1px solid #bbb;border-radius:4px;background:#f5f5f5}.directory-entry button:hover{background:#e9e9e9}</style></head>
+<body><a href="/">← Main page</a><h1>Preferences</h1><p>Defaults for new viewers. Saved in preferences.xml alongside the Node.js code.</p>
+<form id="preferencesForm"><fieldset id="preferenceFields" disabled><legend>ToF Histogram Defaults</legend>
+<label>Bin Width [ns]<input name="binWidthNs" type="number" min="0.1" step="0.1" required></label>
+<fieldset><legend>Rel. ToF range [µs]</legend><label>Minimum<input name="tofLowUs" type="number" step="any" required></label><label>Maximum<input name="tofHighUs" type="number" step="any" required></label></fieldset>
+<fieldset><legend>Zoom range [µs]</legend><label>Minimum<input name="minZoomUs" type="number" min="0" step="any" required></label><label>Maximum<input name="maxZoomUs" type="number" min="0" step="any" required></label><!-- Zoom limits apply to the displayed time span in microseconds, independently of bin width. --></fieldset>
+<label>Break after first ejection [µs]<input name="ejectionBreakUs" type="number" min="0.1" step="any" required></label>
+<p>Also sets the event retention cutoff after each TAG’s ejection time for newly loaded files. Reload a file after changing this value.</p>
+<label>Thousands separator<select name="thousandsSeparator"><option value="comma">Comma — 12,345</option><option value="half-space">Half-space — 12 345</option></select></label>
+<label>Y Scale<select name="yScale"><option value="linear">Lin</option><option value="logarithmic">Log</option></select></label>
+<fieldset><legend>Safe region [µs]</legend><label>Minimum<input name="safeLowUs" type="number" step="any" required></label><label>Maximum<input name="safeHighUs" type="number" step="any" required></label></fieldset>
+<label>Default directory for ToF list mode files<span class="directory-entry"><input id="listModeDirectory" name="listModeDirectory" type="text" required><button id="browseDirectory" type="button">Browse…</button></span></label><p>Use an absolute path on the computer running Node.js.</p>
+<button type="submit">Save Preferences</button><button id="resetDefaults" type="button">Restore Defaults</button></fieldset></form><p id="preferenceStatus" role="status">Loading preferences…</p></body></html>

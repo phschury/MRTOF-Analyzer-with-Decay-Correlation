@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MRTOF Calculator User Manual</title>
+  <style>
+    :root {
+      --text: #1f2933;
+      --muted: #52606d;
+      --border: #d9e2ec;
+      --background: #f7f9fb;
+      --panel: #ffffff;
+      --accent: #2f80ed;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--text);
+      background: var(--background);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.55;
+      font-size: 16px;
+    }
+
+    .page {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 32px 24px 48px;
+    }
+
+    header {
+      margin-bottom: 28px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 30px;
+      line-height: 1.2;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    section {
+      margin: 24px 0;
+      padding: 22px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: 21px;
+      line-height: 1.25;
+      color: #102a43;
+    }
+
+    p {
+      margin: 0 0 14px;
+    }
+
+    p:last-child {
+      margin-bottom: 0;
+    }
+
+    figure {
+      margin: 18px 0 22px;
+      padding: 10px;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    figure img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      margin: 0 auto;
+    }
+
+    figcaption {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    code {
+      padding: 0.12em 0.3em;
+      border-radius: 4px;
+      background: #eef2f7;
+      font-family: Menlo, Monaco, Consolas, "Lucida Console", monospace;
+      font-size: 0.92em;
+    }
+
+    .footer {
+      margin-top: 28px;
+      padding-top: 18px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 14px;
+      text-align: center;
+    }
+
+    a {
+      color: var(--accent);
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        padding: 20px 12px 32px;
+      }
+
+      section {
+        padding: 16px;
+      }
+
+      h1 {
+        font-size: 25px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header>
+      <h1>MRTOF Calculator User Manual</h1>
+      <p class="subtitle">A simple use manual for the features available in the MRTOF Calculator.</p>
+    </header>
+
+    <section id="reference-and-analyte">
+      <h2>Reference and Known Analyte Sections</h2>
+      <figure>
+        <img src="images/manual-top.png" alt="Top section of the MRTOF Calculator showing Reference #1, Reference #2, and Known Analyte controls">
+        <figcaption>Reference #1, Reference #2, t<sub>0</sub>/b-value controls, and Known Analyte controls.</figcaption>
+      </figure>
+
+      <p>At the top you will find three sections. The ion name must be entered with the convention of n<sub>1</sub>X<sub>1</sub>A<sub>1</sub>i<sub>1</sub>; n<sub>2</sub>X<sub>2</sub>A<sub>2</sub>i<sub>2</sub>; n<sub>3</sub>X<sub>3</sub>A<sub>3</sub>i<sub>3</sub>, where nXA is <sup>A</sup>X<sub>n</sub> and i represents the state: m, n, or blank for the first isomer, second isomer, or ground state, respectively. For example, <sup>12</sup>C<sub>2</sub><sup>13</sup>C<sup>1</sup>H<sub>4</sub><sup>16</sup>O would be entered as <code>2C12;1C13;4H1;1O16</code>.</p>
+
+      <p>All calculations require the information for Reference #1 and an estimated t<sub>0</sub> value. Calculations involving ions with a number of laps different from that of Reference #1 also require at least an estimated b-value. In the case of an estimated b-value, the software will use δb=1 ns, while in the case of an estimated t<sub>0</sub> it uses δt<sub>0</sub>=10 ns.</p>
+
+      <p>If Reference #2 makes a different number of laps than Reference #1, the “Calculate b-value” button will calculate the b-value and δb. If Reference #2 is a different nuclide with the same number of laps as Reference #1, the “Calculate t<sub>0</sub>” button will calculate the t<sub>0</sub> and δt<sub>0</sub>. If the number of laps for Reference #2 is left empty, the user can enter the MRTOF Ejection Open time in “t EjO [ns]” and the software will calculate the number of laps when “Calculate b-value” is clicked.</p>
+
+      <p>The Known Analyte section allows the user to perform one of three functions. All functions require entering the ion and correctly setting its charge state. With TOF and either Laps or MRTOF Ejection Open time (“t EjO [ns]”) entered, the user can calculate the ion mass and its deviation from AME21 values. With either Laps or MRTOF Ejection Open time (“t EjO [ns]”) entered, the user can calculate the expected TOF for the ion. If MRTOF Ejection Open time is provided instead of laps, the software will display the calculated number of laps. If neither Laps nor MRTOF Ejection Open time (“t EjO [ns]”) is entered, the software assumes the same number of laps as Reference #1.</p>
+    </section>
+
+    <section id="ufo-search">
+      <h2>UFO Search Tool</h2>
+      <figure>
+        <img src="images/manual-ufo-search.png" alt="UFO search area and periodic table controls in the MRTOF Calculator">
+        <figcaption>UFO search controls, Table of Winners, and periodic table selection controls.</figcaption>
+      </figure>
+
+      <p>Below the Reference and Analyte ion sections, there is a UFO search tool area. The user enters the TOF and δTOF, expected charge, deviation range (“Max Sigma”), Laps, and range of laps to search. The periodic table in the bottom frame is used to select which elements to include in the UFO search. Clicking an element’s box in the periodic table will toggle between yellow (disabled) and green (enabled) for the UFO molecule builder. Clicking “Standard Selection” enables H, C, N, O, F, S, and Ar while disabling all others. Clicking “Deselect All” will disable all elements.</p>
+
+      <p>To the right of the periodic table are some control parameters. By default, we limit to stable elements with at least 1% natural abundance, but the user can enter their preferred lower limit to include more rare isotopes. The Max Nuclides setting selects the maximum number of atom types the UFO molecule can be built from. The Max Atoms setting is the maximum number of any single atom type that can be included in the UFO molecule.</p>
+
+      <p>Click an element to toggle natural isotopes (green). Shift-click to toggle natural plus radioactive isotopes (pink). These are alternate modes: a normal click on pink switches to green, and a Shift-click on green switches to pink. Repeating the same click clears the selection (yellow). Radioactive isotopes are included only for pink elements when Max RI Atoms is greater than zero, subject to the minimum half-life. Natural isotopes in both selected modes must pass the minimum abundance threshold. Shift-click does not change Max RI Atoms; choose one or two to allow radioactive atoms per molecule. Deselect All clears every element. By default, the Min. Halflife is set to 0.1 s, but the user can enter whatever value suits their needs.</p>
+
+      <p>Once the parameters are set as desired, clicking “Find Them!” will begin the search. While searching, the “Find Them!” button will be renamed “Stop” and can be used to interrupt the search in case the search space is too large and the calculation is taking unreasonably long. The Table of Winners will be populated in the order results are found and sorted according to deviation from AME21 (“Δm[σ]”) once the search is finished or stopped. Radioactive ions are denoted with a red background.</p>
+
+      <p>The user can copy the results of an individual cell in the “Molecule” column to the clipboard in the standard encoding scheme used to enter molecules in this software. Clicking on the green header row of the Table of Winners will open a context menu giving the choice to copy the table to the clipboard or to write it to a file.</p>
+    </section>
+
+    <p class="footer">This work is published open source on GitHub at <a href="https://github.com/phschury/calcme" target="_blank" rel="noopener noreferrer">https://github.com/phschury/calcme</a>.</p>
+  </main>
+</body>
+</html>

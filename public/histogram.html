@@ -1,0 +1,280 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ToF Histogram Viewer</title>
+
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="/vendor/plotly/plotly.min.js"></script>
+    <script defer src="/js/number-display.js"></script>
+    <script defer src="/js/listmode-filename.js"></script>
+    <script defer src="/js/tof-axis-editor.js"></script>
+  <script defer src="/js/fit-parameters.js"></script>
+  <script defer src="/js/fit-models.js"></script>
+    <script defer src="/js/fitting.js"></script>
+    <script defer src="/js/histogram-page.js"></script>
+    <script defer src="/js/combine-files.js"></script>
+    <script defer src="/js/distro-viewer.js"></script>
+    <script defer src="/js/correlation-time-viewer.js"></script>
+    <script defer src="/js/workspace-state.js"></script>
+    <script defer src="/js/workspace-session.js"></script>
+  <script defer src="/js/memory-usage.js"></script>
+  <script defer src="/js/evaluate.js"></script>
+</head>
+
+<body class="histogram-viewer">
+
+  <header class="viewer-heading">
+    <h1>ToF Histogram Viewer</h1>
+    <a href="/">Top Page</a>
+  </header>
+  <div class="memory-usage" data-memory-usage aria-live="off">Server RAM: checking…</div>
+  <div id="workspaceStatus" role="status" class="workspace-status"></div>
+
+  <div class="controls">
+    <div id="loadedFileName" class="file-name-display">
+      No listmode file loaded
+    </div>
+    <div class="control-group">
+      <input
+        id="listmodeFile"
+        type="file"
+        multiple
+        accept=".lst,.lm,*/*"
+        style="display: none;"
+      >
+
+      <button id="loadFileButton" title="Choose files or drop them here; multiple files are combined">Load File</button>
+    </div>
+
+    <label>Channel <select id="channel"></select></label>
+    <label>Edge <select id="edge"></select></label>
+    <select id="tag" hidden aria-hidden="true"></select>
+
+    <div class="bin-width-control">
+      <label for="binWidthNs">Bin Width [ns]</label>
+      <input id="binWidth" type="hidden" value="320">
+      <div class="bin-width-editor">
+        <input id="binWidthNs" type="number" value="32" min="0.1" step="0.1">
+        <button id="binWidthToggle" type="button" aria-label="Choose bin width" aria-expanded="false" aria-controls="binWidthOptions">▾</button>
+      </div>
+      <div id="binWidthOptions" hidden aria-label="Bin width presets"></div>
+    </div>
+
+    <input id="tofLowUs" type="hidden" value="12">
+    <input id="tofHighUs" type="hidden" value="16">
+    <label>
+      Plot Width [us]
+      <input id="plotWidthUs" type="number" value="4.0000" min="0.0001" step="0.0001" title="Displayed ToF span in microseconds; changes keep the view centered">
+    </label>
+
+    <label>
+      Y Scale
+      <select id="yScale">
+        <option value="linear">Lin</option>
+        <option value="logarithmic">Log</option>
+      </select>
+    </label>
+
+    <label>
+      Display Mode
+      <select id="timeMode">
+        <option value="relative">Relative</option>
+        <option value="absolute" selected>Absolute</option>
+      </select>
+    </label>
+    <button id="updateButton">Update</button>
+  </div>
+
+  <dialog id="combineFilesDialog" class="combine-files-dialog">
+    <h2>Combine Files</h2>
+    <p>Choose at least two loaded files. Files are placed chronologically using their start times and sweep period, preserving gaps between recordings.</p>
+    <p>Drift-corrected and debounced files cannot be included. Sweep periods and formats must match. Ejection times may differ by at most 1 µs; their file averages are used.</p>
+    <div id="combineFilesChoices"></div>
+    <p id="combineFilesStatus" role="status"></p>
+    <div class="combine-files-actions">
+      <button id="combineFilesCancel" type="button">Cancel</button>
+      <button id="combineFilesSubmit" type="button" disabled>Combine</button>
+    </div>
+  </dialog>
+
+  <div id="runInfo" class="infoPanel"></div>
+
+  <div class="status-row">
+    <div id="status"></div>
+
+    <div class="spectrum-processing-controls">
+    <fieldset class="sweepControls">
+      <legend>Drift Correction</legend>
+      <div class="sweepTitle">Sweeps</div>
+
+      <label class="sweepFirstLabel" for="sweepFirst">First sweep</label>
+      <input id="sweepFirst" class="sweepFirstInput" type="number">
+
+      <button id="sweepUpdateButton" class="sweepUpdateButton">
+        Update
+      </button>
+
+      <label class="sliceLabel">Slice
+        <input id="sliceInput" class="sliceInput" type="number" value="5000" min="1" step="1" title="Sweeps per drift-correction tranche">
+      </label>
+
+      <label class="driftCorrectionTagLabel">TAG <select id="driftCorrectionTag" aria-label="Drift correction TAG"></select></label>
+
+      <button id="showDriftButton" class="driftShowButton" type="button">Show</button>
+      <button id="driftCorrectButton" class="driftCorrectButton" type="button" disabled>Correct</button>
+
+      <label class="sweepLastLabel" for="sweepLast">Last sweep</label>
+      <input id="sweepLast" class="sweepLastInput" type="number">
+    </fieldset>
+    <fieldset class="debounceControls" title="Uses all events in the displayed spectrum, within each sweep.">
+      <legend>Debouncing</legend>
+      <label>Min [ns] <input id="debounceMinNs" type="number" min="0" step="any" value="20"></label>
+      <label>Max [ns] <input id="debounceMaxNs" type="number" min="0" step="any" value="1000"></label>
+      <button id="debounceButton" type="button" disabled>Debounce</button>
+      <button id="distroButton" type="button" disabled title="Plot ions per sweep in the current plotted range">Distro</button>
+      <p id="debounceStatus" role="status"></p>
+    </fieldset>
+    </div>
+  </div>
+
+  <div class="chartBox">
+    <div id="histogramChart" aria-label="Interactive TOF histogram"></div>
+    <button id="safeRegionButton" type="button">Safe Region</button>
+  </div>
+  <div id="zoomLimitHint" class="zoom-limit-hint" role="status" aria-live="polite"></div>
+  <div class="chart-help">Scroll to move the page · Shift + swipe/wheel to zoom or pan · Drag to zoom · Shift-drag to pan · Ctrl-drag to set ROI · Ctrl+C to copy cursor absolute ToF [ns] · Double-click to reset</div>
+
+  <div class="loadedFilesPanel">
+    <div class="loadedFilesTitle">
+      <span>Loaded listmode files / fit results</span>
+      <button id="evaluateButton" type="button">Evaluate</button>
+    </div>
+
+    <table id="loadedFilesTable" class="loadedFilesTable">
+      <thead>
+        <tr>
+          <th>File</th>
+          <th>Ion</th>
+          <th>q</th>
+          <th>Laps</th>
+          <th>Mass [u]</th>
+          <th>ToF [ns]</th>
+          <th>δToF [ns]</th>
+          <th>FWHM [ns]</th>
+          <th>Counts</th>
+        </tr>
+      </thead>
+      <tbody id="loadedFilesTableBody"></tbody>
+    </table>
+  </div>
+
+  <div id="fitModalBackdrop" class="fitModalBackdrop hidden">
+    <div class="fitModal fitModalWide">
+
+      <div class="fitModalHeader">
+        <span>Peak Fit</span>
+
+        <button id="fitModalCloseButton" class="fitModalCloseButton">
+          ×
+        </button>
+      </div>
+
+      <div id="fitModalBody" class="fitModalBody">
+
+        <div class="fitTopControls">
+          <label class="fitModalLabel">
+            TAG
+            <select id="fitTagSelect"></select>
+          </label>
+
+          <label class="fitModalLabel fitModelLabel">
+            Fit model
+            <select id="fitModelSelect">
+              <option value="gaussianConstant">Gaussian + constant</option>
+              <option value="exponentialGaussianHybrid">Exponential–Gaussian hybrid (EGH)</option>
+              <option value="dualExpGaussian">Dual exponential Gaussian (DEG)</option>
+            </select>
+          </label>
+
+          <label class="fitPeakCountLabel">
+            Peaks
+            <input id="fitPeakCountInput" type="number" value="1" min="1" max="1" readonly>
+          </label>
+
+          <div class="fitButtonRow">
+            <button id="fitRunButton">Run Fit</button>
+            <button id="fitSaveButton">Save Fit</button>
+            <button id="fitCancelButton">Cancel</button>
+          </div>
+        </div>
+
+        <div class="fitRoiLine">
+          ROI:
+          <span id="fitModalRoiText">(none)</span>
+        </div>
+
+        <div class="fitParamTableWrap">
+          <table id="fitParamTable" class="fitParamTable">
+            <thead id="fitParamTableHead">
+              <tr>
+                <th>Ion</th>
+                <th>q</th>
+                <th>Laps</th>
+                <th class="fitCenterHeader">Center</th>
+                <th id="fitWidthHeader">FWHM (µs)</th>
+                <th id="fitParamExtraHeader1">Height</th>
+                <th id="fitParamExtraHeader2">Background</th>
+                <th id="fitParamExtraHeader3">Tail (inactive)</th>
+              </tr>
+            </thead>
+
+            <tbody id="fitParamTableBody">
+              <!-- fitting.js should generate one row per peak here -->
+            </tbody>
+          </table>
+        </div>
+
+        <div class="fitHintLine">
+          Enter value(uncertainty), e.g. 123(2.1), with an absolute uncertainty.
+          Right-click a parameter cell to toggle Fixed: constrain to value ± uncertainty.
+          Use (0) to hold it exactly. (?) means uncertainty unavailable; enter an uncertainty before constraining it.
+          Run Fit overwrites the inputs with the fitted values and uncertainties.
+          <span id="fitModelHint"></span>
+        </div>
+
+        <div class="fitSummaryArea">
+          <div>Area: <span id="fitAreaText">—</span></div>
+          <div>Counts: <span id="fitCountsText">—</span></div>
+          <div>Reduced χ²: <span id="fitChi2Text">—</span></div>
+        </div>
+
+        <div id="fitStatusText" class="fitStatusText">
+          Ready.
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+<dialog id="evaluateDialog" aria-labelledby="evaluateTitle">
+    <header class="evaluation-heading"><h2 id="evaluateTitle">MRTOF Analyzer</h2><button id="evaluateClose" type="button" aria-label="Close evaluation">×</button></header>
+    <div class="evaluation-body">
+      <div class="evaluation-toolbar">
+        <div class="evaluation-stack"><button id="evaluationReload" type="button">Reload</button><button id="evaluationRemove" type="button">Remove</button></div>
+        <label class="evaluation-source">Spectrum<input id="evaluationSpectrum" type="number" min="0" step="1" value="0"></label>
+        <button id="evaluationDelete" type="button">Delete row</button>
+        <label>Ref. delay [ns]<input id="evaluationRefDelay" type="number" step="any" value="0"></label>
+        <label>Inherent delay [ns]<input id="evaluationDelay" type="number" step="any" value="40"></label>
+        <label>Reference Species<input id="evaluationReference" type="text" value="1Cs133"></label>
+        <div class="evaluation-stack"><button type="button" disabled title="Mass calculation will be added when evaluation rules are defined">Calc Mass</button><button id="evaluationExport" type="button">Export Data</button></div>
+      </div>
+      <div class="evaluation-table-wrap"><table aria-label="Fitted measurements"><thead><tr><th>Date of mid-measurement</th><th>Duration</th><th>Species</th><th>Charge</th><th>Laps</th><th>ToF [ns]</th><th>Mass [u]</th><th>Mass Excess [keV]</th><th>Δm [keV]</th></tr></thead><tbody id="evaluationMeasurements"></tbody></table></div>
+      <div class="evaluation-table-wrap"><table aria-label="Mass evaluation summary"><thead><tr><th>Species</th><th>Laps</th><th>Reference</th><th>Ratio</th><th>Mass [u]</th><th>Mass Excess [keV]</th><th>Δm [keV]</th><th>Total Counts</th><th>Total Duration</th></tr></thead><tbody id="evaluationSummary"></tbody></table></div>
+      <p id="evaluationStatus" role="status">Mass evaluation is not yet configured.</p>
+    </div>
+  </dialog>
+</body>
+</html>

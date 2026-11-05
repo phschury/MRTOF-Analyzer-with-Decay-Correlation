@@ -1,0 +1,218 @@
+<!--index.html-->
+<!DOCTYPE html>
+<html lang="en">
+  <link rel="stylesheet" href="index.css">
+  <head>
+    <meta charset="UTF-8">
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline';"> 
+<!-- <meta http-equiv="content_security_policy": "default-src 'self' style-src 'self' 'unsafe-inline';"> -->
+
+    <title>MRTOF Calculator</title>
+  </head>
+  <body>
+    <img id="logo" src="wnsc_logo.png" alt="HTML5 Icon"> 
+    <img id="mirrorLeft" src="Mirror.png" alt="HTML5 Icon">
+    <img id="mirrorRight" src="Mirror.png" alt="HTML5 Icon">
+
+<a id="userManualLink" href="manual.html" target="_blank" rel="noopener">User Manual</a>
+
+<div id='divReference1'>
+  <text id="lblRef1">Reference #1</text>
+  <text id="lblNameRef1">Ion</text>
+  <select name="Charge" id="selCharge1">
+    <option value="1">1+</option>
+    <option value="2">2+</option>
+    <option value="3">3+</option>
+  </select>
+  <input id="NameRef1" value="1Rb85"></input>
+  <text id="lblMass1">Ion Mass:</text>
+  <text id="Mass1">u</text>
+  <text id="lblref1Laps">Laps</text>
+  <input id="ref1Laps" value="530"></input>
+  <text id="lblToF_Ref1">ToF [ns]</text>
+  <input id="ToF_Ref1" value="14069315.23"></input>
+  <input id="ToF_Ref1err" value = 0.1></input>
+  <text id="lblRef1EjTime">t EjO [ns]</text>
+  <input id="Ref1EjTime"></input>
+  <text id="lblbEstimate">Estimated b-value</text>
+  <input id="bEstimate"></input>
+</div>
+
+<div id='divReference2'>
+  <text id="lblRef2">Reference #2</text>
+  <text id="lblNameRef2">Ion</text>
+  <select name="Charge" id="selCharge2">
+    <option value="1">1+</option>
+    <option value="2">2+</option>
+    <option value="3">3+</option>
+  </select>
+  <input id="NameRef2" value="1Rb87"></input>
+  <text id="lblMass2">Ion Mass:</text>
+  <text id="Mass2">u</text>
+  <text id="lblref2Laps">Laps</text>
+  <input id="ref2Laps" value="524"></input>
+  <text id="lblToF_Ref2">ToF [ns]</text>
+  <input id="ToF_Ref2" value="14072990.61"></input>
+  <input id="ToF_Ref2err" value="0.2"></input>
+  <text id="lblRef2EjTime" value="14057020.0">t EjO [ns]</text>
+  <input id="Ref2EjTime"></input>
+</div>
+
+<div id="divt0Estimated">
+    <text id="lblt0">Estimated t_0 [ns]</text>
+    <input id="t0" value="125"></input>
+</div>
+
+<div id='divt0Controls'>  
+  <text id="lblCalct0">...</text>
+  <button id="btn_t0Calc">Calculate t_0</button>
+</div>
+
+<div id='divbControls'>  
+  <button id="btn_bCalc">Calculate b-value</button>
+  <text id="lblb">...</text>
+</div>
+
+<div id="Analyte">
+    <text id="lblAnalyte">Known Analyte</text>
+  <text id="lblNameAnalyte">Ion</text>
+  <select name="Charge" id="selChargeAna">
+    <option value="1">1+</option>
+    <option value="2">2+</option>
+    <option value="3">3+</option>
+  </select>
+  <input id="NameAnalyte" value=""></input>
+  <text id="lblMassAna">Ion Mass:</text>
+  <text id="MassAna">u</text>
+  <text id="lblAnalyteLaps">Laps</text>
+  <input id="AnalyteLaps" value=""></input>
+  <text id="lblToF_Analyte">ToF [ns]</text>
+  <input id="ToF_Analyte" value=""></input>
+  <input id="ToF_AnalyteErr"></input>
+  <text id="lblAnalyteEjTime">t EjO [ns]</text>
+  <input id="AnalyteEjTime"></input>
+</div>
+
+<div id="calcMass" class="tab">
+  <button id="btn_MECalc">Calculate Mass</button>
+  <text id="lblMassExcess">ME= ... keV</text>
+  <text id="lbldM">δME= ... keV</text>
+  <text id="lblDM">Δm= ... keV</text>
+</div>
+
+<div id="calcToF">
+  <button id="btn_ToFCalc">Calculate ToF</button>
+</div>
+
+<div id="divSCM">
+  <text id="lblSCMAnalyte">Unknown Analyte (SCM)</text>
+  <text id="lblSCMLaps">Laps:</text>
+  <text id="lblSCMLapsRange">±</text>
+  <text id="lblSCMCharge">Charge:</text>
+  <select name="Charge" id="selChargeSCM">
+    <option value="1">1+</option>
+    <option value="2">2+</option>
+    <option value="3">3+</option>
+  </select>
+  <text id="lblMaxSigma">Max Sigma:</text>
+  <input id="maxSigma" value="5"></input>
+  <input id="SCMLaps" value="1"></input>
+  <input id="SCMLapsRange" value="0"></input>
+  <text id="lblToF_SCM">ToF [ns]</text>
+  <input id="ToF_SCM" value=""></input>
+  <input id="ToF_SCMErr" value=""></input>
+<!--  <text id="lblSCMEjTime">t EjO [ns]</text>
+  <input id="SCMEjTime"></input> -->
+  <button id="btnFindSCM">Find Them!</button>
+  <text id="lblSearching">...</text>
+
+  <table id="SCMTable">
+  <colgroup>
+    <col style="width: 145px;"> <!-- Molecule name-->
+    <col style="width: 90px;"> <!-- Ion Mass -->
+    <col style="width: 40px;"> <!-- Laps -->
+    <col style="width: 70px;"> <!-- Δm [σ] -->
+    <col style="width: 70px;"> <!-- Δm [keV] -->
+  </colgroup>
+  <thead>
+    <tr>
+      <th>Molecule</th>
+      <th>Ion Mass [u]</th>
+      <th>Laps </th>
+      <th>Δm [σ]</th>
+      <th>Δm [keV]</th>
+    </tr>
+  </thead>
+</table>
+  <!--
+  <table id="SCMTable">
+    <thead><tr><th>Molecule</sup></th><th>Ion Mass [u]</th><th>Δm [σ]</th><th>Δm [keV]</th></tr></thead>
+  </table>
+  -->
+
+</div>
+
+<div id="divPeriodicTable">
+  <p id="elementSelectionHelp">Click: natural isotopes (green). Shift-click: natural + radioactive (pink). Yellow: excluded.</p>
+  <text id="lblMinAbundance">Min. Abundance [%]:</text>
+  <input id="minAbundance" value="1"></input>
+  <text id="lblMaxElements">Max Nuclides:</text>
+  <select name="MaxElements" id="selMaxElements">
+    <option value="1">1</option>
+    <option value="2">2</option>
+    <option value="3">3</option>
+    <option value="4">4</option>
+    <option value="5">5</option>
+    <option value="6">6</option>
+    <option value="7">7</option>
+    <option value="8">8</option>
+  </select>
+  <text id="lblMaxAtoms">Max Atoms:</text>
+  <select name="MaxAtoms" id="selMaxAtoms">
+    <option value="1">1</option>
+    <option value="2">2</option>
+    <option value="3">3</option>
+    <option value="4">4</option>
+    <option value="5">5</option>
+    <option value="6">6</option>
+    <option value="7">7</option>
+    <option value="8">8</option>
+    <option value="9">9</option>
+    <option value="10">10</option>
+    <option value="11">11</option>
+    <option value="12">12</option>
+    <option value="13">13</option>
+    <option value="14">14</option>
+    <option value="15">15</option>
+    <option value="16">16</option>
+    <option value="17">17</option>
+    <option value="18">18</option>
+    <option value="19">19</option>
+    <option value="20">20</option>
+  </select>
+  <text id="lblMaxRI">Max RI Atoms:</text>
+  <select name="MaxRI" id="selMaxRI">
+    <option value="0">0</option>
+    <option value="1">1</option>
+    <option value="2">2</option>
+  </select>
+  <text id="lblMinHalflife">Min. Halflife [s]:</text>
+  <input id="minHalflife" value="0.1"></input>
+
+  <button id="btnSelectStandardSet">Standard Selection</button>
+  <button id="btnSelectNone">Deselect All</button>
+</div>
+
+<div id="githubFooter">
+  Looking for the desktop version?
+  Download the Electron version from
+  <a href="https://github.com/phschury/calcme" target="_blank">GitHub</a>.
+</div>
+
+<!-- <script src="./periodic.js"> </script> -->
+<script src="./render.js"> </script>
+<script src="./workspace-state.js"></script>
+
+  </body>
+</html>

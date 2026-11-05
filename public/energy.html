@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Energy Histogram Viewer</title>
+  <link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/energy.css">
+  <script src="/vendor/plotly/plotly.min.js"></script>
+  <script defer src="/js/number-display.js"></script><script defer src="/js/energy-import.js"></script><script defer src="/js/energy-roi.js"></script><script defer src="/js/energy-gaussian-fit.js"></script><script defer src="/js/energy-page.js"></script>
+  <script defer src="/js/memory-usage.js"></script>
+</head>
+<body class="histogram-viewer energy-viewer">
+  <header class="viewer-heading"><h1>Energy Histogram Viewer</h1><a href="/">Top Page</a></header>
+  <div class="memory-usage" data-memory-usage aria-live="off">Server RAM: checking…</div>
+  <div class="controls">
+    <div id="energyFilename" class="file-name-display">No energy listmode file loaded</div>
+    <input id="energyFile" type="file" multiple hidden>
+    <button id="energyLoad" type="button" title="Choose files or drop them here">Load File</button>
+    <label>Module<select id="energyModule" aria-label="Module"></select></label>
+    <label>Channel / detector<select id="energyChannel" aria-label="Channel or detector"></select></label>
+    <label>Bin Width <span id="energyBinUnit">[ch]</span><input id="energyBinWidth" type="number" min="0.000001" step="any" value="1"></label>
+    <label>Y Scale<select id="energyYScale"><option value="linear">Lin</option><option value="log">Log</option></select></label>
+    <button id="energyUpdate" type="button">Update</button>
+    <button id="energyConnectTof" type="button" disabled>Connect to ToF</button>
+  </div>
+  <dialog id="energyTofDialog" class="energy-tof-dialog">
+    <h2>Connect to ToF spectrum</h2>
+    <p id="energyTofSource"></p>
+    <p>The Niki data and the selected ToF spectrum are assumed to start at the same time: energy elapsed zero aligns with ToF sweep zero.</p>
+    <div id="energyTofChoices"></div>
+    <p id="energyTofStatus" role="status"></p>
+    <a href="/histogram.html" target="_blank" rel="noopener">Open ToF Histogram Viewer</a>
+    <div class="energy-tof-actions"><button id="energyTofCancel" type="button">Cancel</button><button id="energyTofConfirm" type="button" disabled>Connect</button></div>
+  </dialog>
+  <div class="energy-options">
+    <fieldset id="energyAxis"><legend>Energy axis</legend>
+      <label>Display<select id="energyUnit"><option value="ch">Pulse height [ch]</option><option value="keV">Calibrated energy [keV]</option></select></label>
+      <label>Gain [keV/ch]<input id="energyGain" type="number" min="0.000001" step="any" value="1" disabled></label>
+      <label>Offset [keV]<input id="energyOffset" type="number" step="any" value="0" disabled></label>
+      <label>Minimum<input id="energyLow" type="number" step="any" placeholder="Auto"></label>
+      <label>Maximum<input id="energyHigh" type="number" step="any" placeholder="Auto"></label>
+    </fieldset>
+    <div class="energy-time-options">
+    <fieldset><legend>Elapsed-time filter</legend>
+      <label>Timebase [ns/tick]<input id="energyTimebaseNs" type="number" min="0.000001" step="any" placeholder="Not specified"></label>
+      <label>From [s]<input id="energyTimeLow" type="number" min="0" step="any" placeholder="Start" disabled></label>
+      <label>To [s]<input id="energyTimeHigh" type="number" min="0" step="any" placeholder="End" disabled></label>
+    </fieldset>
+    <fieldset><legend>Correlation range filter</legend>
+      <label>Pre-time [s]<input id="energyCorrelationPreTime" type="number" min="0" step="any" value="0" title="Time window before an Energy ROI event, in seconds"></label>
+      <label>Post-time [s]<input id="energyCorrelationPostTime" type="number" min="0" step="any" value="0" title="Time window after an Energy ROI event, in seconds"></label>
+    </fieldset>
+    </div>
+  </div>
+  <div id="energyInfo" class="infoPanel"></div>
+  <div class="energy-tof-connection"><span id="energyTofConnection">No ToF spectrum connected.</span><button id="energyTofDisconnect" type="button" hidden>Disconnect</button></div>
+  <div id="energyStatus" role="status" aria-live="polite">Choose a decay energy listmode file.</div>
+  <div class="chartBox"><div id="energyChart" aria-label="Interactive decay energy histogram"></div></div>
+  <div class="energy-roi-controls"><span id="energyRoiStatus" role="status">No ROI selected</span><button id="energyRoiClear" type="button" disabled>Clear ROI</button></div>
+  <div id="energyFitStatus" role="status" aria-live="polite"></div>
+  <div id="energySavedRois" class="energy-roi-controls" aria-label="Saved energy ROIs"></div>
+  <div class="chart-help">Ctrl-drag to set ROI · Right-click to fit or save an ROI, or remove a saved ROI · Click a saved ROI name to select it · Drag to zoom · Select Pan in the chart toolbar to move · Double-click to reset · Pulse heights use ADC channels until a calibration is supplied.</div>
+  <div class="loadedFilesPanel">
+    <div class="loadedFilesTitle">Loaded decay energy files</div>
+    <table class="loadedFilesTable"><thead><tr><th>File</th><th>Format</th><th>Events</th><th>Recorded span</th><th></th></tr></thead><tbody id="energyFiles"></tbody></table>
+  </div>
+</body>
+</html>

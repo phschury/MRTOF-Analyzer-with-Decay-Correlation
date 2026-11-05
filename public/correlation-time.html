@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Correlation time</title><link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/css/distro.css">
+  <script defer src="/vendor/plotly/plotly.min.js"></script>
+  <script defer src="/js/number-display.js"></script>
+  <script defer src="/js/correlation-time.js"></script>
+</head>
+<body>
+  <p id="source"></p>
+  <form id="timeControls">
+    <label>Energy selection <select id="energyRoi"><option value="">Full Box detector sum</option></select></label>
+    <label>Time scale <select id="timeXScale"><option value="linear">Linear</option><option value="log">Log</option></select></label>
+    <label>Bin width [s] <input id="timeBinWidth" type="number" min="0.0000000001" step="any" placeholder="Auto"></label> <button type="submit">Update</button>
+    <label><input id="timeFitExponential" type="checkbox"> Fit exponential decay</label>
+    <button id="timeFitSchmidt" type="button" aria-pressed="false" title="Fit the Schmidt logarithmic-time distribution; switches to Log time scale. Click again to clear.">Schmidt half-life</button>
+  </form>
+  <p id="fitResult" role="status" hidden></p>
+  <p id="schmidtResult" role="status" hidden></p>
+  <p id="status" role="status">Loading correlation times…</p>
+  <div id="distroPlot" aria-label="Histogram of time from ToF implantation to the next remaining Box detector sum decay event"></div>
+</body>
+</html>

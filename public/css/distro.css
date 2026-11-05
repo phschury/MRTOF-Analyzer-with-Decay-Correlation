@@ -1,0 +1,6 @@
+html,body { height:100%; margin:0; }
+body { box-sizing:border-box; padding:10px 14px; display:flex; flex-direction:column; gap:6px; font:13px sans-serif; background:#f7f9fb; }
+p { margin:0; overflow-wrap:anywhere; }
+#source { font-weight:600; }
+#status { color:#444; }
+#distroPlot { flex:1; min-height:180px; }

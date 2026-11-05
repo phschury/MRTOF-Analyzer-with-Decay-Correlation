@@ -1,0 +1,33 @@
+const {test}=require('node:test');
+const assert=require('node:assert/strict');
+const {app}=require('../main');
+
+test('HTTP upload, save, reload, live push, and New Session form one shared workspace',async t=>{
+ const server=app.listen(0,'127.0.0.1');
+ await new Promise((resolve,reject)=>{server.once('listening',resolve);server.once('error',reject)});
+ t.after(()=>{server.closeAllConnections();server.close()});
+ const root=`http://127.0.0.1:${server.address().port}`;
+ const json=async(path,options)=>{const response=await fetch(root+path,options);return {status:response.status,body:await response.json()};};
+ const initial=(await json('/api/session')).body;
+ const stream=await fetch(root+'/api/session/events');const reader=stream.body.getReader();
+ t.after(()=>reader.cancel());
+ const first=await reader.read();assert.match(new TextDecoder().decode(first.value),/sessionId/);
+ const uploaded=await json('/api/listmode-file',{method:'POST',headers:{'Content-Type':'application/octet-stream','X-Filename':'test.lst','X-Workspace-Session':initial.sessionId},body:'time_patch=1a\n[DATA]\n000000000641'});
+ assert.equal(uploaded.status,200);
+ const datasetId=uploaded.body.datasetId;
+ const push=await reader.read();assert.match(new TextDecoder().decode(push.value),new RegExp(datasetId));
+ const saved=await json('/api/session',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:initial.sessionId,activeDatasetId:datasetId,changes:[{datasetId,settings:{binWidth:'40',sliceInput:'2000',absoluteViewRange:{min:7.833,max:7.955}},roi:{lowUs:12,highUs:13},upsertFits:[{id:'fit1',formula:'1Fr221',charge:1}]}]})});
+ assert.equal(saved.status,200);
+ const restored=(await json('/api/session')).body;
+ assert.equal(restored.states[0].fits[0].formula,'1Fr221');
+ assert.equal(restored.states[0].settings.sliceInput,'2000');
+ assert.deepEqual(restored.states[0].settings.absoluteViewRange,{min:7.833,max:7.955});
+ const metadata=await json('/api/metadata?datasetId='+datasetId);assert.equal(metadata.status,200);
+ const reset=(await json('/api/session/new',{method:'POST'})).body;
+ assert.notEqual(reset.sessionId,initial.sessionId);assert.deepEqual(reset.states,[]);
+ const stale=await json('/api/session',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({sessionId:initial.sessionId,changes:[]})});
+ assert.equal(stale.status,409);
+ const lateUpload=await json('/api/listmode-file',{method:'POST',headers:{'Content-Type':'application/octet-stream','X-Workspace-Session':initial.sessionId},body:Buffer.from('stale')});
+ assert.equal(lateUpload.status,409);
+ const files=(await json('/api/listmode-datasets')).body;assert.deepEqual(files.datasets,[]);
+});

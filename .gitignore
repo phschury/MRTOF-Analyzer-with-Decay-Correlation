@@ -1,0 +1,22 @@
+# Installed dependencies and native build products
+node_modules/
+build/
+*.o
+*.node
+
+# Local experimental data, generated images, and saved workspaces
+*.lst
+outputs/
+
+# Local preferences and operating-system files
+preferences.xml
+.DS_Store
+
+# Credentials and local environment settings
+.env
+.env.*
+!.env.example
+
+# Logs and historical local backup
+*.log
+/main_old_1.js

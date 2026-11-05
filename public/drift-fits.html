@@ -1,0 +1,9 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Drift fit results</title><link rel="icon" href="data:,"><link rel="stylesheet" href="/css/drift-fits.css">
+<script defer src="/vendor/plotly/plotly.min.js"></script><script defer src="/js/number-display.js"></script>
+  <script defer src="/js/fit-parameters.js"></script><script defer src="/js/drift-export.js"></script><script defer src="/js/drift-fits.js"></script></head>
+<body><div class="results-toolbar"><h1>Drift fit results</h1><button id="acceptResults" disabled>Accept</button><button id="rejectResults">Reject</button><button id="exportResults" disabled>Export</button></div><p id="source"></p><p id="status" role="status">Preparing tranche fits…</p>
+<div id="resultsPlot" aria-label="Fitted time-of-flight center versus sweep"></div>
+<p>Gaussian + constant fits in the selected TOF ROI. Results are a snapshot. Successful tranches are corrected across all TAG numbers using first-successful/current absolute fitted TOF. Tranches with no events are skipped and do not count as failures. Failed nonempty tranches are discarded; more than 32,768 consecutive failed sweeps aborts correction. The original spectrum is preserved. Last sweep in each row is exclusive.</p>
+<table><thead><tr><th>First sweep</th><th>Last sweep</th><th>Events</th><th>Center (µs after ejection)</th><th>FWHM (µs)</th><th>Reduced χ²</th><th>Result</th></tr></thead><tbody id="results"></tbody></table></body></html>
